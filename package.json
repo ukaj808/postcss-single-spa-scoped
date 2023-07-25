@@ -1,0 +1,45 @@
+{
+  "name": "postcss-single-spa-prefix",
+  "version": "0.0.0",
+  "description": "PostCSS plugin for prefixing css selectors with a single-spa application id",
+  "keywords": ["postcss", "css", "postcss-plugin", "postcss-single-spa-prefix"],
+  "scripts": {
+    "test": "jest --coverage && eslint ."
+  },
+  "author": "Fisnik <ukaj808@gmail.com>",
+  "license": "MIT",
+  "repository": "github.com/ukaj808/postcss-single-spa-prefix",
+  "engines": {
+    "node": ">=12.0.0"
+  },
+  "peerDependencies": {
+    "postcss": "^8.3.0"
+  },
+  "devDependencies": {
+    "clean-publish": "^3.4.2",
+    "eslint": "^8.0.1",
+    "eslint-plugin-jest": "^25.2.2",
+    "jest": "^27.3.1",
+    "postcss": "^8.3.11"
+  },
+  "eslintConfig": {
+    "parserOptions": {
+      "ecmaVersion": 2017
+    },
+    "env": {
+      "node": true,
+      "es6": true
+    },
+    "extends": ["eslint:recommended", "plugin:jest/recommended"],
+    "rules": {
+      "jest/expect-expect": "off"
+    }
+  },
+  "jest": {
+    "coverageThreshold": {
+      "global": {
+        "statements": 100
+      }
+    }
+  }
+}
