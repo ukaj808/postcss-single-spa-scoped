@@ -32,7 +32,7 @@ it('Throws error if no appName opt provided or package.json found', async () => 
 
   try {
     // 1. Create temp folder
-    await fs.mkdirSync(tempFolderPath, { recursive: true }, (err) => {});
+    await fs.mkdirSync(tempFolderPath, { recursive: true }, () => {});
 
     // 2. Mock process.cwd() to temp folder
     // This simulates the root of a project with no package.json
@@ -50,7 +50,7 @@ it('Throws error if no appName opt provided or package.json found', async () => 
     await process.chdir(`${process.cwd()}/..`);
 
     // 4. Delete temp folder
-    await fs.rmdirSync(tempFolderPath, { }, (err) => {});
+    await fs.rmdirSync(tempFolderPath, { }, () => {});
   }
 
 });

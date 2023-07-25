@@ -19,14 +19,16 @@ module.exports = (opts = {
         pjson = { name: '@jet-oomta/order-list' } ;
       } else {
         pjson = require(`${process.cwd()}/package.json`);
-      } 
-    } catch (e) {} // catch file access errors
+      }
+    } catch (e) {
+      console.error(e);
+    } // catch file access errors
     if (!pjson || !pjson.name) throw new Error("Could not generate prefix. Please provide an appName in the options or ensure your project has a package.json with a name property.");
     prefix += `${pjson.name}`;
   }
 
   prefix = cssesc(`#${prefix}`);
-  
+
   const processed = Symbol('processed');
 
   return {

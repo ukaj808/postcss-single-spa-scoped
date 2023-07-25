@@ -9,8 +9,8 @@
     "postcss-single-spa-scoped"
   ],
   "scripts": {
-    "test:unit": "jest index.test.js --coverage && eslint .",
-    "test:integration": "jest index.integration.test.js --coverage && eslint ."
+    "test:unit": "jest index.test.js && eslint .",
+    "test:integration": "jest index.integration.test.js && eslint ."
   },
   "author": "Fisnik <ukaj808@gmail.com>",
   "license": "MIT",
