@@ -5,7 +5,6 @@ on:
       - 'master'
 
 env:
-  NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
   FORCE_COLOR: 2
 
 
@@ -19,6 +18,9 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: 20
-    - run: npm ci
-    - run: npx clean-publish
+        registry-url: 'https://registry.npmjs.org'
 
+    - run: npm ci
+    - run: npm publish
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
