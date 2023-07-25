@@ -1,29 +1,30 @@
 name: Test
 on:
   push:
+    branches-ignore:
+      - 'master'
+    paths-ignore:
+      - '**.md'
   pull_request:
+    branches:
+      - '**'
+
 env:
   FORCE_COLOR: 2
+
 jobs:
   test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version:
-          - 20
-          - 18
-          - 16
-    name: Node.js ${{ matrix.node-version }} Quick
+        node-version: [20, 18, 16]
+    name: Node.js ${{ matrix.node-version }} unit and integration tests
     steps:
-      - name: Checkout the repository
-        uses: actions/checkout@v3
-      - name: Install Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node-version }}
-      - name: Install dependencies
-        uses: bahmutov/npm-install@v1
-      - name: Run unit tests
-        run: npm run test:unit
-      - name: Run integration tests
-        run: npm run test:integration
+    - uses: actions/checkout@v3
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+    - run: npm ci
+    - run: npm run test:unit
+    - run: npm run test:integration
