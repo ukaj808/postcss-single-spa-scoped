@@ -1,12 +1,12 @@
 {
-  "name": "postcss-single-spa-prefix",
+  "name": "postcss-single-spa-scoped",
   "version": "0.0.0",
-  "description": "PostCSS plugin for prefixing css selectors with a single-spa application id",
+  "description": "PostCSS plugin for manipulating the CSS in a single-spa application to best achieve scoped CSS",
   "keywords": [
     "postcss",
     "css",
     "postcss-plugin",
-    "postcss-single-spa-prefix"
+    "postcss-single-spa-scoped"
   ],
   "scripts": {
     "test:unit": "jest index.test.js --coverage && eslint .",

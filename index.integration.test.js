@@ -23,7 +23,7 @@ async function run (input, output, opts = { }, expectedErrorMessage = undefined)
 it('Retreives appName from package.json if no appName opt provided', async () => {
     await run(
       'a { };',
-      '#single-spa-application:postcss-single-spa-prefix a { };',
+      '#single-spa-application:postcss-single-spa-scoped a { };',
       { });
 });
 
