@@ -5,7 +5,9 @@ on:
       - 'master'
 
 env:
+  NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
   FORCE_COLOR: 2
+
 
 jobs:
   release:
@@ -19,3 +21,4 @@ jobs:
         node-version: 20
     - run: npm ci
     - run: npx clean-publish
+
