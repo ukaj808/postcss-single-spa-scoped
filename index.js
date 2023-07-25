@@ -2,9 +2,11 @@ const cssesc = require('cssesc');
 
 /**
  * @type {import('postcss').PluginCreator}
+ * @param {object} opts
+ * @param {string} opts.appName
  */
 module.exports = (opts = {
-  appName: string | undefined,
+  appName: undefined,
 }) => {
 
   let prefix = 'single-spa-application:';
@@ -28,7 +30,7 @@ module.exports = (opts = {
   const processed = Symbol('processed');
 
   return {
-   postcssPlugin: 'postcss-single-spa-prefix',
+   postcssPlugin: 'singleSpaScoped',
    Rule (rule) {
     // 0. Check if rule has already been processed
     if (rule[processed]) return;
