@@ -1,6 +1,6 @@
-# postcss-single-spa-prefix
+# postcss-single-spa-scoped
 
-[PostCSS] plugin for prefixing css selectors with a single-spa application id.
+[PostCSS] PostCSS plugin for manipulating the CSS in a single-spa application to best achieve scoped CSS.
 
 [PostCSS]: https://github.com/postcss/postcss
 
@@ -21,7 +21,7 @@
 **Step 1:** Install plugin:
 
 ```sh
-npm install --save-dev postcss postcss-single-spa-prefix
+npm install --save-dev postcss postcss-single-spa-scoped
 ```
 
 **Step 2:** Check you project for existed PostCSS config: `postcss.config.js`
