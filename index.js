@@ -1,4 +1,4 @@
-const cssesc = require('cssesc');
+const cssesc = require('css.escape');
 
 /**
  * @type {import('postcss').PluginCreator}
@@ -20,14 +20,18 @@ module.exports = (opts = {
       } else {
         pjson = require(`${process.cwd()}/package.json`);
       }
-    } catch (e) {
-      console.error(e);
-    } // catch file access errors
-    if (!pjson || !pjson.name) throw new Error("Could not generate prefix. Please provide an appName in the options or ensure your project has a package.json with a name property.");
+      // eslint-disable-next-line no-empty
+    } catch (e) { } // catch file access errors
+
+    if (!pjson || !pjson.name) {
+      console.log(pjson);
+      throw new Error("Could not generate prefix. Please provide an appName in the options or ensure your project has a package.json with a name property.");
+    }
+
     prefix += `${pjson.name}`;
   }
 
-  prefix = cssesc(`#${prefix}`);
+  prefix = `#${cssesc(prefix)}`;
 
   const processed = Symbol('processed');
 

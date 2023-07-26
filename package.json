@@ -53,6 +53,6 @@
     }
   },
   "dependencies": {
-    "cssesc": "^3.0.0"
+    "css.escape": "^1.5.1"
   }
 }

@@ -4,16 +4,7 @@ const fs = require('fs');
 
 process.env.NODE_ENV = 'production';
 
-async function run (input, output, opts = { }, expectedErrorMessage = undefined) {
-
-  if (expectedErrorMessage) {
-    try {
-      await postcss([plugin(opts)]).process(input, { from: undefined })
-    } catch (e) {
-      expect(e.message).toEqual(expectedErrorMessage);
-    }
-  }
-
+async function run (input, output, opts = { }) {
   let result = await postcss([plugin(opts)]).process(input, { from: undefined })
   expect(result.css).toEqual(output)
   expect(result.warnings()).toHaveLength(0)
@@ -23,34 +14,27 @@ async function run (input, output, opts = { }, expectedErrorMessage = undefined)
 it('Retreives appName from package.json if no appName opt provided', async () => {
     await run(
       'a { };',
-      '#single-spa-application:postcss-single-spa-scoped a { };',
+      '#single-spa-application\\:postcss-single-spa-scoped a { };',
       { });
 });
 
 it('Throws error if no appName opt provided or package.json found', async () => {
-  const tempFolderPath = `${process.cwd()}/temp`;
+    const tempFolderPath = `${process.cwd()}/temp`;
 
-  try {
     // 1. Create temp folder
-    await fs.mkdirSync(tempFolderPath, { recursive: true }, () => {});
+    fs.mkdirSync(tempFolderPath, { recursive: true }, () => {});
 
     // 2. Mock process.cwd() to temp folder
     // This simulates the root of a project with no package.json
-    await process.chdir(tempFolderPath);
+    process.chdir(tempFolderPath);
 
 
-    await run(
-      '#single-spa-application:my-app { };',
-      '#single-spa-application:my-app { };',
-      { appName: 'my-app' },
-      "Could not generate prefix. Please provide an appName in the options or ensure your project has a package.json with a name property."
-    );
-  } finally {
+    expect(() => postcss([plugin({ })]).process('a { };', { from: undefined })).toThrow(Error);
+
     // 3. Navigate back to root folder
-    await process.chdir(`${process.cwd()}/..`);
+    process.chdir(`${process.cwd()}/..`);
 
     // 4. Delete temp folder
-    await fs.rmdirSync(tempFolderPath, { }, () => {});
-  }
+    fs.rmdirSync(tempFolderPath, { }, () => {});
 
 });
