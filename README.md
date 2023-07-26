@@ -1,6 +1,6 @@
 # postcss-single-spa-scoped
 
-[PostCSS] plugin for manipulating the CSS in a single-spa application to best achieve scoped CSS.
+[PostCSS] plugin for manipulating the global CSS in a single-spa application to best achieve scoped CSS.
 
 [PostCSS]: https://github.com/postcss/postcss
 
