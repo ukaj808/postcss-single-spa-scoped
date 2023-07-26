@@ -15,7 +15,7 @@ it('Retreives appName from package.json if no appName opt provided', async () =>
     await run(
       'a { };',
       '#single-spa-application\\:postcss-single-spa-scoped a { };',
-      { });
+      { framework: 'vue' });
 });
 
 it('Throws error if no appName opt provided or package.json found', async () => {
@@ -29,7 +29,7 @@ it('Throws error if no appName opt provided or package.json found', async () => 
     process.chdir(tempFolderPath);
 
 
-    expect(() => postcss([plugin({ })]).process('a { };', { from: undefined })).toThrow(Error);
+    expect(() => postcss([plugin({ framework: 'vue' })]).process('a { };', { from: undefined })).toThrow(Error);
 
     // 3. Navigate back to root folder
     process.chdir(`${process.cwd()}/..`);
