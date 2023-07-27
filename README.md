@@ -1,6 +1,6 @@
 # postcss-single-spa-scoped
 
-[PostCSS] plugin for manipulating the global CSS in a single-spa application to best achieve scoped CSS.
+[PostCSS] plugin for manipulating the CSS in a single-spa application to best achieve scoped CSS.
 
 [PostCSS]: https://github.com/postcss/postcss
 
@@ -42,25 +42,30 @@ TODO
 **Step 1:** Install plugin:
 
 ```sh
-npm install --save-dev postcss postcss-single-spa-scoped
+npm install --save-dev postcss-single-spa-scoped
 ```
 
-**Step 2:** Check you project for existed PostCSS config: `postcss.config.js`
-in the project root, `"postcss"` section in `package.json`
-or `postcss` in bundle config.
+**Step 2:** Add the plugin to your config:
 
-If you do not use PostCSS, add it according to [official docs]
-and set this plugin in settings.
+### Vite
 
-**Step 3:** Add the plugin to plugins list:
+```ts
+// vite.config.ts
+import vue from '@vitejs/plugin-vue'
+import singleSpaScoped from 'postcss-single-spa-scoped';
 
-```diff
-module.exports = {
+export default defineConfig({
   plugins: [
-+   require('postcss-single-spa-scoped'),
-    require('autoprefixer')
-  ]
-}
+    vue(),
+  ],
+  css: {
+    postcss: {
+      // Options.framework         -- Mandatory: (vue or react)
+      // Options.react             -- Conditionally Mandatory (if using react)
+      // Options.react.scopeConfig -- Conditionally Mandatory (if using react)
+      plugins: [singleSpaScoped({framework: 'vue' })],
+    }
+  },
+})
 ```
 
-[official docs]: https://github.com/postcss/postcss#usage
