@@ -60,6 +60,7 @@ export default defineConfig({
   ],
   css: {
     postcss: {
+      // Options.appName           -- Optional: (Uses package.json "name" by default)
       // Options.framework         -- Mandatory: (vue or react)
       // Options.react             -- Conditionally Mandatory (if using react)
       // Options.react.scopeConfig -- Conditionally Mandatory (if using react)
