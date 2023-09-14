@@ -24,7 +24,7 @@ module.exports = (opts = {
     let pjson;
     try {
       if (process.env.NODE_ENV === 'test') {
-        pjson = { name: '@jet-oomta/order-list' } ;
+        pjson = { name: '@org/app-name' } ;
       } else {
         pjson = require(`${process.cwd()}/package.json`);
       }

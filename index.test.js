@@ -13,14 +13,14 @@ async function run (input, output, opts = { }) {
 */
 
 it('rules already prefixed with the single-spa prefix are ignored', async () => {
-  await run('#single-spa-application\\:\\@jet-oomta\\/order-list { };',
-            '#single-spa-application\\:\\@jet-oomta\\/order-list { };',
+  await run('#single-spa-application\\:\\@org\\/app-name { };',
+            '#single-spa-application\\:\\@org\\/app-name { };',
             { framework: 'vue' });
 });
 
 it(':root is replaced with the prefix entirely', async () => {
   await run(':root { };',
-            `#single-spa-application\\:\\@jet-oomta\\/order-list { };`,
+            `#single-spa-application\\:\\@org\\/app-name { };`,
              { framework: 'vue' });
 })
 
@@ -32,7 +32,7 @@ it('"single-spa-prefix-ignore comment prefixed" rule is ignored', async () => {
 
 it('rule prefixed with comment other than single-spa-prefix-ignore is prefixed', async () => {
   await run('/* single-spa-prefix-ignore */\na { }; /* single-spa-prefix-ignore */.c1 { }; /* this class is nice! */.c2 { };',
-            '/* single-spa-prefix-ignore */\na { }; /* single-spa-prefix-ignore */.c1 { }; /* this class is nice! */#single-spa-application\\:\\@jet-oomta\\/order-list .c2 { };',
+            '/* single-spa-prefix-ignore */\na { }; /* single-spa-prefix-ignore */.c1 { }; /* this class is nice! */#single-spa-application\\:\\@org\\/app-name .c2 { };',
             { framework: 'vue' });
 });
 
@@ -72,7 +72,7 @@ it('The framework.name is vue; an already scoped rule is ignored', async () => {
   nodes: [scopedRule, globalRule],
  });
 
- await run(input, '.c1 {}\n#single-spa-application\\:\\@jet-oomta\\/order-list .c2 {}', { framework: 'vue' });
+ await run(input, '.c1 {}\n#single-spa-application\\:\\@org\\/app-name .c2 {}', { framework: 'vue' });
 });
 
 it('The framework.name is react; an already scoped rule is ignored', async () => {
@@ -100,5 +100,5 @@ it('The framework.name is react; an already scoped rule is ignored', async () =>
     nodes: [scopedRule, globalRule],
   });
 
-  await run(input, '.c1 {}\n#single-spa-application\\:\\@jet-oomta\\/order-list .c2 {}', { framework: 'react', react: { scopeConfig: 'css-modules'} });
+  await run(input, '.c1 {}\n#single-spa-application\\:\\@org\\/app-name .c2 {}', { framework: 'react', react: { scopeConfig: 'css-modules'} });
 });
