@@ -24,6 +24,12 @@ it(':root is replaced with the prefix entirely', async () => {
              { framework: 'vue' });
 })
 
+it(':root is replaced with the prefix entirely and additional selectors if provided', async () => {
+  await run(':root { };',
+            `#single-spa-application\\:\\@org\\/app-name, #app, #blahblah123 { };`,
+             { framework: 'vue', additionalSelectors: ['#app', '#blahblah123'] });
+})
+
 it('"single-spa-prefix-ignore comment prefixed" rule is ignored', async () => {
   await run('/* single-spa-prefix-ignore */\na { }; /* single-spa-prefix-ignore */.c1 { };',
             '/* single-spa-prefix-ignore */\na { }; /* single-spa-prefix-ignore */.c1 { };',
@@ -101,4 +107,10 @@ it('The framework.name is react; an already scoped rule is ignored', async () =>
   });
 
   await run(input, '.c1 {}\n#single-spa-application\\:\\@org\\/app-name .c2 {}', { framework: 'react', react: { scopeConfig: 'css-modules'} });
+});
+
+it('Prefix with additional selectors ontop of single-spa prefix, if additional selectors provided', async () => {
+  await run('a { display: flex; };',
+            '#single-spa-application\\:\\@org\\/app-name a, #app a, #blahblah123 a { display: flex; };',
+            { framework: 'vue', additionalSelectors: ['#app', '#blahblah123'] });
 });

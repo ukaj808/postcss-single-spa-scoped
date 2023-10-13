@@ -8,6 +8,7 @@ const path = require('path');
  * @param {string} opts.framework
  * @param {object} opts.react
  * @param {string} opts.react.scopeConfig
+ * @param {string[]}  opts.additionalSelectors
  */
 module.exports = (opts = {
   appName: undefined,
@@ -81,14 +82,15 @@ module.exports = (opts = {
       return;
     }
 
-    // 3. Check if :root selector, if it is; replace with prefix entirely
+    // 3. Check if :root selector, if it is; replace with prefix and additonal selectors entirely
     if (rule.selector === ':root') {
-      rule.selector = prefix;
+      rule.selector = prefix + (opts.additionalSelectors ? ', ' +  opts.additionalSelectors.join(', ') : '');
       rule[processed] = true;
       return;
     }
 
-    rule.selector = prefix + ' ' + rule.selector;
+    rule.selector = prefix + ' ' + rule.selector +
+        (opts.additionalSelectors ? ', ' +  opts.additionalSelectors.map(s =>  `${s} ${rule.selector}`).join(', ') : '');
     rule[processed] = true;
    },
   }
