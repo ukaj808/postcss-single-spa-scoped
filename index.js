@@ -76,22 +76,24 @@ module.exports = (opts = {
       }
     }
 
-    // 3. Check if selector is already prefixed with the single-spa prefix
-    if (rule.selector.startsWith(prefix)) {
-      rule[processed] = true;
-      return;
-    }
+    rule.selector = rule.selectors.reduce((resultSelector, selector, i) => {
+      const suffix = i === rule.selectors.length - 1 ? '' : ', ';
+      // 3. Check if selector is already prefixed
+      if (selector.startsWith(prefix)) {
+        return resultSelector + selector + suffix;
+      }
+      // 4. Check if selector is :root then replace entirely
+      if (selector === ':root') {
+        return resultSelector + (prefix + (opts.additionalSelectors ? ', ' +  opts.additionalSelectors.join(', ') : '')) + suffix;
+      }
+      // 5. Prefix selector
+      return resultSelector + (prefix + ' ' + selector +
+        (opts.additionalSelectors ? ', ' +  opts.additionalSelectors.map(s =>  `${s} ${selector}`).join(', ') : '')) + suffix;
 
-    // 3. Check if :root selector, if it is; replace with prefix and additonal selectors entirely
-    if (rule.selector === ':root') {
-      rule.selector = prefix + (opts.additionalSelectors ? ', ' +  opts.additionalSelectors.join(', ') : '');
-      rule[processed] = true;
-      return;
-    }
+    }, '');
 
-    rule.selector = prefix + ' ' + rule.selector +
-        (opts.additionalSelectors ? ', ' +  opts.additionalSelectors.map(s =>  `${s} ${rule.selector}`).join(', ') : '');
     rule[processed] = true;
+
    },
   }
 }

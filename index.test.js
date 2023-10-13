@@ -114,3 +114,17 @@ it('Prefix with additional selectors ontop of single-spa prefix, if additional s
             '#single-spa-application\\:\\@org\\/app-name a, #app a, #blahblah123 a { display: flex; };',
             { framework: 'vue', additionalSelectors: ['#app', '#blahblah123'] });
 });
+
+
+it('Grouped selectors are prefixed correctly, before each individual selector', async () => {
+  await run('a, b, c { display: flex; };',
+            '#single-spa-application\\:\\@org\\/app-name a, #single-spa-application\\:\\@org\\/app-name b, #single-spa-application\\:\\@org\\/app-name c { display: flex; };',
+            { framework: 'vue' });
+
+});
+
+it('grouped selectors are prefixed correctly, before each individual selector, with additional selectors', async () => {
+  await run('a, b, c { display: flex; };',
+            '#single-spa-application\\:\\@org\\/app-name a, #app a, #blahblah123 a, #single-spa-application\\:\\@org\\/app-name b, #app b, #blahblah123 b, #single-spa-application\\:\\@org\\/app-name c, #app c, #blahblah123 c { display: flex; };',
+            { framework: 'vue', additionalSelectors: ['#app', '#blahblah123'] });
+});
