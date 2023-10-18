@@ -140,3 +140,9 @@ it('grouped selectors are prefixed correctly, before each individual selector, w
             '#single-spa-application\\:\\@org\\/app-name a, #app a, #blahblah123 a, #single-spa-application\\:\\@org\\/app-name b, #app b, #blahblah123 b, #single-spa-application\\:\\@org\\/app-name c, #app c, #blahblah123 c { display: flex; };',
             { framework: 'vue', additionalSelectors: ['#app', '#blahblah123'] });
 });
+
+it('Keyframe selectors are not prefixed', async () => {
+  await run('@keyframes mymove { from { top: 0px; } to { top: 200px; } }',
+            '@keyframes mymove { from { top: 0px; } to { top: 200px; } }',
+            { framework: 'vue' });
+});

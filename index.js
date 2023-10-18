@@ -46,6 +46,14 @@ module.exports = (opts = {
   return {
    postcssPlugin: 'postcss-single-spa-scoped',
    Rule (rule) {
+
+    // -1. Check if rule is a keyframes rule
+    if (rule.parent && rule.parent.type === 'atrule' && rule.parent.name === 'keyframes') {
+      console.log(rule);
+      rule[processed] = true;
+      return;
+    }
+
     // 0. Check if rule has already been processed
     if (rule[processed]) return;
 
