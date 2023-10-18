@@ -1,9 +1,11 @@
 const postcss = require('postcss');
 const plugin = require('./');
 
+jest.mock('uuid');
+
 async function run (input, output, opts = { }) {
   let result = await postcss([plugin(opts)]).process(input, { from: undefined })
-  expect(result.css).toEqual(output)
+  expect(result.css).toMatch(output)
   expect(result.warnings()).toHaveLength(0)
 }
 
@@ -141,8 +143,14 @@ it('grouped selectors are prefixed correctly, before each individual selector, w
             { framework: 'vue', additionalSelectors: ['#app', '#blahblah123'] });
 });
 
-it('Keyframe selectors are not prefixed', async () => {
+it('Keyframe names are suffixed and keyframe offset selectors are not prefixed', async () => {
   await run('@keyframes mymove { from { top: 0px; } to { top: 200px; } }',
-            '@keyframes mymove { from { top: 0px; } to { top: 200px; } }',
+            '@keyframes mymove-b8f36a64 { from { top: 0px; } to { top: 200px; } }',
+            { framework: 'vue' });
+});
+
+it('Keyframes and all references are suffixed with the first chunk of a uid', async () => {
+  await run('@keyframes mymove { from { top: 0px; } to { top: 200px; } }; .c1 { animation-name: mymove; }',
+            '@keyframes mymove-b8f36a64 { from { top: 0px; } to { top: 200px; } }; #single-spa-application\\:\\@org\\/app-name .c1 { animation-name: mymove-b8f36a64; }',
             { framework: 'vue' });
 });

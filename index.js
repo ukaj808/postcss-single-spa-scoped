@@ -1,5 +1,6 @@
 const cssesc = require('css.escape');
 const path = require('path');
+const uuid = require('uuid');
 
 /**
  * @type {import('postcss').PluginCreator}
@@ -41,15 +42,32 @@ module.exports = (opts = {
 
   prefix = `#${cssesc(prefix)}`;
 
+  const keyframeSuffix = '-' + uuid.v4().substring(0, 8);
+
   const processed = Symbol('processed');
 
   return {
    postcssPlugin: 'postcss-single-spa-scoped',
+   AtRule (atRule) {
+      if (atRule[processed]) return;
+      if (atRule.name === 'keyframes') {
+        atRule.params = atRule.params + keyframeSuffix;
+        atRule[processed] = true;
+      }
+   },
+   Declaration (decl) {
+      if (decl[processed]) return;
+      if (decl.prop === 'animation-name') {
+        decl.value = decl.value + keyframeSuffix;
+        decl[processed] = true;
+      }
+   },
    Rule (rule) {
 
-    // -1. Check if rule is a keyframes rule
+
+    // -1. Check if rule is a keyframes rule (AND DONT PREFIX!)
+    // This list is subject to grow... I'm unsure of all the use cases.
     if (rule.parent && rule.parent.type === 'atrule' && rule.parent.name === 'keyframes') {
-      console.log(rule);
       rule[processed] = true;
       return;
     }
