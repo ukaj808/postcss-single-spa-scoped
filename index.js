@@ -76,19 +76,28 @@ module.exports = (opts = {
       }
     }
 
+    const additionalSelectorsProvided = opts.additionalSelectors && opts.additionalSelectors.length > 0;
+
+    // sanitize additional selectors
+    if (additionalSelectorsProvided) {
+      opts.additionalSelectors = opts.additionalSelectors.filter(s => s !== null && s.length > 0).map(s => s.trim());
+    }
+
     rule.selector = rule.selectors.reduce((resultSelector, selector, i) => {
       const suffix = i === rule.selectors.length - 1 ? '' : ', ';
       // 3. Check if selector is already prefixed
       if (selector.startsWith(prefix)) {
         return resultSelector + selector + suffix;
       }
+
+
       // 4. Check if selector is :root then replace entirely
       if (selector === ':root') {
-        return resultSelector + (prefix + (opts.additionalSelectors ? ', ' +  opts.additionalSelectors.join(', ') : '')) + suffix;
+        return resultSelector + (prefix + (additionalSelectorsProvided ? ', ' +  opts.additionalSelectors.join(', ') : '')) + suffix;
       }
       // 5. Prefix selector
       return resultSelector + (prefix + ' ' + selector +
-        (opts.additionalSelectors ? ', ' +  opts.additionalSelectors.map(s =>  `${s} ${selector}`).join(', ') : '')) + suffix;
+        (additionalSelectorsProvided ? ', ' +  opts.additionalSelectors.map(s =>  `${s} ${selector}`).join(', ') : '')) + suffix;
 
     }, '');
 

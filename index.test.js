@@ -115,6 +115,18 @@ it('Prefix with additional selectors ontop of single-spa prefix, if additional s
             { framework: 'vue', additionalSelectors: ['#app', '#blahblah123'] });
 });
 
+it('Filter out empty string additinal selectors', async () => {
+  await run('a { display: flex; };',
+            '#single-spa-application\\:\\@org\\/app-name a, #app a { display: flex; };',
+            { framework: 'vue', additionalSelectors: ['#app', ''] });
+});
+
+it('Empty additionalSelectors works the same as not providing additionalSelectors', async () => {
+  await run('a { display: flex; };',
+            '#single-spa-application\\:\\@org\\/app-name a { display: flex; };',
+            { framework: 'vue', additionalSelectors: [] });
+});
+
 
 it('Grouped selectors are prefixed correctly, before each individual selector', async () => {
   await run('a, b, c { display: flex; };',
