@@ -28,8 +28,7 @@
     "eslint": "^8.0.1",
     "eslint-plugin-jest": "^25.2.2",
     "jest": "^27.3.1",
-    "postcss": "^8.3.11",
-    "uuid": "^9.0.1"
+    "postcss": "^8.3.11"
   },
   "eslintConfig": {
     "parserOptions": {
@@ -48,6 +47,7 @@
     }
   },
   "dependencies": {
-    "css.escape": "^1.5.1"
+    "css.escape": "^1.5.1",
+    "uuid": "^9.0.1"
   }
 }
