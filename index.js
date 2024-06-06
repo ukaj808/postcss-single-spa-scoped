@@ -1,5 +1,4 @@
 const cssesc = require('css.escape');
-const path = require('path');
 const uuid = require('uuid');
 
 /**
