@@ -3,11 +3,33 @@ const path = require('path');
 const uuid = require('uuid');
 
 /**
+ * @typedef {Object} VueSkipScopedStylesConfig
+ * @property {'vue'} framework
+ */
+
+/**
+ * @typedef {Object} ReactSkipScopedStylesConfig
+ * @property {'react'} framework
+ * @property {'css-modules'} scopeStrategy
+ */
+
+/**
+ * @typedef {Object} SvelteSkipScopedStylesConfig
+ * @property {'svelte'} framework
+ * @property {'vite'} tooling
+ */
+
+/**
+ * @typedef {Object} PluginOpts
+ * @property {string} [appName]
+ * @property {false | VueSkipScopedStylesConfig | ReactSkipScopedStylesConfig | SvelteSkipScopedStylesConfig} [opts.skipScopedStyles=false]
+ * @property {string[]} [additionalSelectors]
+ */
+
+
+/**
  * @type {import('postcss').PluginCreator}
- * @param {object} opts
- * @param {string} opts.appName
- * @param {boolean | VueScopeConfig | ReactScopeConfig | SvelteScopeConfig} opts.skipScopedStyles // default: true
- * @param {string[]}  opts.additionalSelectors
+ * @param {PluginOpts} opts
  */
 module.exports = (opts) => {
 

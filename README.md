@@ -22,9 +22,9 @@ Typically in single page application frameworks (Vue, React, etc.), there is a s
 // main.ts file
 import './style.css';
 ```
-These styles are not scoped to any component! This is typically a good thing as it allows you to share styles; but _global_ stylesheets are a problem when your application is nested inside a microfrontend architecture. Why is it a problem? Because typically "import './style.css'" is compiled by bundlers into javascript code which mounts that style sheet in the head element as a style tag. 
+These styles are not scoped to any component! This is typically a good thing as it allows you to share styles; but _global_ stylesheets are a problem when your application is nested inside a microfrontend architecture. Why is it a problem? Because typically "import './style.css'" is compiled by bundlers into javascript code which mounts that style sheet in the head element as a style tag.
 
-That style you defined in your style.css file? _"h1 { font-size: 100px }"_.. It's now affecting the whole page! 
+That style you defined in your style.css file? _"h1 { font-size: 100px }"_.. It's now affecting the whole page!
 
 This plugin attemps to counteract that by following the single-spa recomendation and prefixing all of your compiled css selectors with an id _"#single-spa-application//:..."_. This works (for the most part) because your application is nested inside a div that single-spa creates that has the aforementioned _fancy_ id.
 
@@ -62,6 +62,7 @@ export default defineConfig({
     postcss: {
       // Options.appName             -- Optional: (Uses package.json "name" by default)
       // Options.additionalSelectors -- Optional
+      // Options.skipScopedStyles    -- Optional: (false by default)
       plugins: [singleSpaScoped()],
     }
   },
