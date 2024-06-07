@@ -34,7 +34,18 @@ This plugin attemps to counteract that by following the single-spa recomendation
 
 Sometimes your application has _portals_ (html outside the body) like modals or popups. These will typically leave the boundary of the single-spa div. That global style you defined will now not effect that portal because your now prefixed selectors wont select it.
 
-TODO
+To address this we added a field, additionalSelectors, to our plugin options. We expect an array of strings that are valid css selectors. We will then scope each original selector to each of the additional selectors you've provided *along* with the single-spa-id scope.
+
+For example, if your pass ["#my-dialog"], the output will be:
+
+```css
+#single-spa-application\:\@app1 .pointer-events-none,
+#my-dialog .pointer-events-none {
+	pointer-events: none
+}
+```
+
+This will help you address the _portals_ issue! Give your portal an id and then add that id as an additional selector... now your portal will be selected.
 
 
 ## Usage
@@ -67,5 +78,32 @@ export default defineConfig({
     }
   },
 })
+```
+
+### Plugin Options Type Definitions
+
+```ts
+type PluginOpts = {
+    appName?: string;
+    skipScopedStyles?: SkipScopedStyles;
+    additionalSelectors?: string[];
+}
+
+type SkipScopedStyles = false | VueSkipScopedStylesConfig | ReactSkipScopedStylesConfig | SvelteSkipScopedStylesConfig;
+
+type VueSkipScopedStylesConfig = {
+  framework: 'vue',
+}
+
+type ReactSkipScopedStylesConfig = {
+  framework: 'react',
+  scopeStrategy: 'css-modules'
+}
+
+type SvelteSkipScopedStylesConfig = {
+  framework: 'svelte',
+  tooling: 'vite'
+}
+
 ```
 
