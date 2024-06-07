@@ -1,4 +1,5 @@
 const cssesc = require('css.escape');
+const path = require('path');
 const uuid = require('uuid');
 
 /**
@@ -131,6 +132,7 @@ module.exports = (opts) => {
           // if selector contains string ".svelte-"
           if (rule.source && rule.source.input && rule.source.input.file) {
             const filePath = path.parse(rule.source.input.file, rule.selectors);
+            // DONT TOUCH RULES DURING THE VITE-PREPROCESS; SKIP THEM!
             if (filePath.base && filePath.base.includes('.vite-preprocess.')) {
               rule[processed] = true;
               return;
