@@ -60,24 +60,17 @@ npm install --save-dev postcss-single-spa-scoped
 
 ### Vite
 
-```ts
-// vite.config.ts
-import vue from '@vitejs/plugin-vue'
-import singleSpaScoped from 'postcss-single-spa-scoped';
+```js
+// postcss.config.cjs
+export default {
+    plugins: {
+        "postcss-single-spa-scoped": {
+          // appName: "app1",
+          // additionalSelectors: ["#my-dialog"]
+        }
+    },
+}
 
-export default defineConfig({
-  plugins: [
-    vue(),
-  ],
-  css: {
-    postcss: {
-      // Options.appName             -- Optional: (Uses package.json "name" by default)
-      // Options.additionalSelectors -- Optional
-      // Options.skipScopedStyles    -- Optional: (false by default)
-      plugins: [singleSpaScoped()],
-    }
-  },
-})
 ```
 
 ### Plugin Options Type Definitions
@@ -85,25 +78,7 @@ export default defineConfig({
 ```ts
 type PluginOpts = {
     appName?: string;
-    skipScopedStyles?: SkipScopedStyles;
     additionalSelectors?: string[];
 }
-
-type SkipScopedStyles = false | VueSkipScopedStylesConfig | ReactSkipScopedStylesConfig | SvelteSkipScopedStylesConfig;
-
-type VueSkipScopedStylesConfig = {
-  framework: 'vue',
-}
-
-type ReactSkipScopedStylesConfig = {
-  framework: 'react',
-  scopeStrategy: 'css-modules'
-}
-
-type SvelteSkipScopedStylesConfig = {
-  framework: 'svelte',
-  tooling: 'vite'
-}
-
 ```
 
