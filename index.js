@@ -3,29 +3,10 @@ const path = require('path');
 const uuid = require('uuid');
 
 /**
- * @typedef {Object} VueSkipScopedStylesConfig
- * @property {'vue'} framework
- */
-
-/**
- * @typedef {Object} ReactSkipScopedStylesConfig
- * @property {'react'} framework
- * @property {'css-modules'} scopeStrategy
- */
-
-/**
- * @typedef {Object} SvelteSkipScopedStylesConfig
- * @property {'svelte'} framework
- * @property {'vite'} tooling
- */
-
-/**
  * @typedef {Object} PluginOpts
  * @property {string} [appName]
- * @property {false | VueSkipScopedStylesConfig | ReactSkipScopedStylesConfig | SvelteSkipScopedStylesConfig} [opts.skipScopedStyles=false]
  * @property {string[]} [additionalSelectors]
  */
-
 
 /**
  * @type {import('postcss').PluginCreator}
@@ -33,36 +14,7 @@ const uuid = require('uuid');
  */
 module.exports = (opts) => {
 
-
-  // set default options
   opts = opts || {};
-  if (opts.skipScopedStyles === undefined) {
-    opts.skipScopedStyles = false;
-  }
-
-  // validate skipScopedStyles config
-  if (typeof opts.skipScopedStyles === 'boolean' && opts.skipScopedStyles) {
-    throw new Error('Invalid skipScopedStyles value: skipScopedStyles must be true or a framework configuration object');
-  }
-  if (typeof opts.skipScopedStyles !== 'boolean') {
-    // validate that the skipScopedStyles is a correct framework config
-    if (opts.skipScopedStyles.framework !== 'vue' && opts.skipScopedStyles.framework !== 'react' && opts.skipScopedStyles.framework !== 'svelte') {
-      throw new Error('Invalid skipScopedStyles value: skipScopedStyles must be a boolean or a framework configuration object');
-    }
-    // if the framework is react, validate the scopeConfig
-    if (opts.skipScopedStyles.framework === 'react') {
-      if (opts.skipScopedStyles.scopeStrategy !== 'css-modules') {
-        throw new Error('Invalid skipScopedStyles value: scopeStrategy must be defined as "css-modules" for react applications');
-      }
-    }
-
-    // if the framework is svelte, validate the scopeConfig
-    if (opts.skipScopedStyles.framework === 'svelte') {
-      if (opts.skipScopedStyles.tooling !== 'vite') {
-        throw new Error('Invalid skipScopedStyles value: The tooling value must be defined as "vite" for svelte applications. Only supports vite as of now.');
-      }
-    }
-  }
 
   let prefix = 'single-spa-application:';
   if (opts.appName && opts.appName.length > 0) {
@@ -129,41 +81,12 @@ module.exports = (opts) => {
       }
     }
 
-    // 2. If user wants to skip already scoped styles, check if the rule is scoped by the framework
-
-    if (typeof opts.skipScopedStyles === 'object') {
-      if (opts.skipScopedStyles.framework === 'vue') {
-        if (rule.source && rule.source.input && rule.source.input.file) {
-          const filePath = path.parse(rule.source.input.file);
-          if (filePath.base && filePath.base.includes('&scoped=')) {
-            rule[processed] = true;
-            return;
-          }
-        }
-      } else if (opts.skipScopedStyles.framework === 'react') {
-        if (opts.skipScopedStyles.scopeStrategy === 'css-modules') {
-          if (rule.source && rule.source.input && rule.source.input.file) {
-            const filePath = path.parse(rule.source.input.file);
-            if (filePath.base.endsWith('.module.css')) {
-              rule[processed] = true;
-              return;
-            }
-          }
-        }
-      } else if (opts.skipScopedStyles.framework === 'svelte') {
-          // if selector contains string ".svelte-"
-          if (rule.source && rule.source.input && rule.source.input.file) {
-            const filePath = path.parse(rule.source.input.file, rule.selectors);
-            // DONT TOUCH RULES DURING THE VITE-PREPROCESS; SKIP THEM!
-            if (filePath.base && filePath.base.includes('.vite-preprocess.')) {
-              rule[processed] = true;
-              return;
-            }
-            if (rule.selector.includes('.svelte-')) {
-              rule[processed] = true;
-              return;
-            }
-         }
+    // SVELTE HACK
+    if (rule.source && rule.source.input && rule.source.input.file) {
+      const filePath = path.parse(rule.source.input.file);
+      if (filePath.base && filePath.base.includes('.vite-preprocess.')) {
+        rule[processed] = true;
+        return;
       }
     }
 
