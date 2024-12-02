@@ -5,6 +5,7 @@ const uuid = require('uuid');
 /**
  * @typedef {Object} PluginOpts
  * @property {string} [appName]
+ * @property {boolean} [excludeParcels]
  * @property {string[]} [additionalSelectors]
  */
 
@@ -98,19 +99,20 @@ module.exports = (opts) => {
     }
 
     rule.selector = rule.selectors.reduce((resultSelector, selector, i) => {
-      const suffix = i === rule.selectors.length - 1 ? '' : ', ';
+      let suffix = i === rule.selectors.length - 1 ? '' : ', ';
+
       // 3. Check if selector is already prefixed
       if (selector.startsWith(prefix)) {
+        if (opts.excludeParcels) {
+          const selectorWithoutPrefix = selector.substring(prefix.length + 1); // +1 for the hierarchy space
+          return resultSelector + (selector + `:not([id^="single-spa-application\\:parcel"] ${selectorWithoutPrefix})`) + suffix;
+        }
         return resultSelector + selector + suffix;
       }
 
 
-      // 4. Check if selector is :root then replace entirely
-      if (selector === ':root') {
-        return resultSelector + (prefix + (additionalSelectorsProvided ? ', ' +  opts.additionalSelectors.join(', ') : '')) + suffix;
-      }
-      // 5. Prefix selector
-      return resultSelector + (prefix + ' ' + selector +
+      // 4. Prefix selector
+      return resultSelector + (prefix + ' ' + selector + (opts.excludeParcels ? `:not([id^="single-spa-application\\:parcel"] ${selector})` : '') +
         (additionalSelectorsProvided ? ', ' +  opts.additionalSelectors.map(s =>  `${s} ${selector}`).join(', ') : '')) + suffix;
 
     }, '');

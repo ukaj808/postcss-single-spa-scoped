@@ -19,17 +19,6 @@ it('rules already prefixed with the single-spa prefix are ignored', async () => 
             '#single-spa-application\\:\\@org\\/app-name { };');
 });
 
-it(':root is replaced with the prefix entirely', async () => {
-  await run(':root { };',
-            `#single-spa-application\\:\\@org\\/app-name { };`);
-})
-
-it(':root is replaced with the prefix entirely and additional selectors if provided', async () => {
-  await run(':root { };',
-            `#single-spa-application\\:\\@org\\/app-name, #app, #blahblah123 { };`,
-             { additionalSelectors: ['#app', '#blahblah123'] });
-})
-
 it('"single-spa-prefix-ignore comment prefixed" rule is ignored', async () => {
   await run('/* single-spa-prefix-ignore */\na { }; /* single-spa-prefix-ignore */.c1 { };',
             '/* single-spa-prefix-ignore */\na { }; /* single-spa-prefix-ignore */.c1 { };');
@@ -85,4 +74,40 @@ it('Keyframe names are suffixed and keyframe offset selectors are not prefixed',
 it('Keyframes and all references are suffixed with the first chunk of a uid', async () => {
   await run('@keyframes mymove { from { top: 0px; } to { top: 200px; } }; .c1 { animation-name: mymove; }',
             '@keyframes mymove-b8f36a64 { from { top: 0px; } to { top: 200px; } }; #single-spa-application\\:\\@org\\/app-name .c1 { animation-name: mymove-b8f36a64; }');
+});
+
+it('Additional :not pseudo-class suffixed to selectors to exclude styling of parcels', async () => {
+  await run('a { display: flex; };',
+            '#single-spa-application\\:\\@org\\/app-name a:not([id^="single-spa-application\\:parcel"] a) { display: flex; };',
+    { excludeParcels: true });
+});
+
+it('Additional :not pseudo-class contains the original selector (with hierarchy) without the prefix', async () => {
+  await run('div a .c1 { display: flex; };',
+    '#single-spa-application\\:\\@org\\/app-name div a .c1:not([id^="single-spa-application\\:parcel"] div a .c1) { display: flex; };',
+    { excludeParcels: true });
+});
+
+it('Rules already prefixed with the single-spa-prefix have there original selector suffixed with the exclude parcel pseudo class', async () => {
+  await run('#single-spa-application\\:\\@org\\/app-name a .b { display: flex; };',
+            '#single-spa-application\\:\\@org\\/app-name a .b:not([id^="single-spa-application\\:parcel"] a .b) { display: flex; };',
+    { excludeParcels: true });
+});
+
+it('Additional selectors are not suffixed with the excludeParcels pseudo class when excludeParcels is true', async () => {
+  await run('button { display: flex; };',
+    '#single-spa-application\\:\\@org\\/app-name button:not([id^="single-spa-application\\:parcel"] button), #app button, .rando123 button { display: flex; };',
+    { additionalSelectors: ['#app', '.rando123'], excludeParcels: true });
+});
+
+it('grouped selectors are suffixed correctly with the excludeParcels pseudo class when exlcudeParcels is true', async () => {
+  await run('.a, .b, .c { display: flex; };',
+    '#single-spa-application\\:\\@org\\/app-name .a:not([id^="single-spa-application\\:parcel"] .a), #single-spa-application\\:\\@org\\/app-name .b:not([id^="single-spa-application\\:parcel"] .b), #single-spa-application\\:\\@org\\/app-name .c:not([id^="single-spa-application\\:parcel"] .c) { display: flex; };',
+    { excludeParcels: true });
+});
+
+it('grouped selectors are suffixed correctly with the excludeParcels pseudo class and additional selectors are untouched', async () => {
+  await run('a, b, c { display: flex; };',
+    '#single-spa-application\\:\\@org\\/app-name a:not([id^="single-spa-application\\:parcel"] a), #app a, .rando123 a, #single-spa-application\\:\\@org\\/app-name b:not([id^="single-spa-application\\:parcel"] b), #app b, .rando123 b, #single-spa-application\\:\\@org\\/app-name c:not([id^="single-spa-application\\:parcel"] c), #app c, .rando123 c { display: flex; };',
+    { additionalSelectors: ['#app', '.rando123'], excludeParcels: true });
 });
