@@ -2,6 +2,18 @@ const cssesc = require('css.escape');
 const path = require('path');
 const uuid = require('uuid');
 
+
+const extractPseudoElement = (str) => {
+    const pseudoElementsRegex = /^(.*?)(::(?:after|backdrop|before|cue(?:\([^()]*\))?|file-selector-button|first-letter|first-line|grammar-error|highlight\([^()]+\)|marker|part\([^()]+\)|placeholder|selection|slotted\([^()]+\)|spelling-error|target-text|view-transition(?:-image-pair\([^()]+\)|-group\([^()]+\)|-new\([^()]+\)|-old\([^()]+\))?))$/;
+    const match = str.match(pseudoElementsRegex);
+    if (match) {
+        return {
+            selector: match[1],         // The string before the pseudo-element
+            pseudoElement: match[2], // The matched pseudo-element
+        };
+    }
+    return null;
+}
 /**
  * @typedef {Object} PluginOpts
  * @property {string} [appName]
@@ -100,20 +112,44 @@ module.exports = (opts) => {
 
     rule.selector = rule.selectors.reduce((resultSelector, selector, i) => {
       let suffix = i === rule.selectors.length - 1 ? '' : ', ';
+      let additionalSelectors = additionalSelectorsProvided ? ', ' +  opts.additionalSelectors.map(s =>  `${s} ${selector}`).join(', ') : '';
+
 
       // 3. Check if selector is already prefixed
       if (selector.startsWith(prefix)) {
         if (opts.excludeParcels) {
           const selectorWithoutPrefix = selector.substring(prefix.length + 1); // +1 for the hierarchy space
-          return resultSelector + (selector + `:not([id^="single-spa-application\\:parcel"] ${selectorWithoutPrefix})`) + suffix;
+          const pseudoElement = extractPseudoElement(selectorWithoutPrefix);
+
+          if (pseudoElement) {
+            if (!pseudoElement.selector) pseudoElement.selector = '*';
+            const excludeParcelsPseudoClass = `:not([id^="single-spa-application\\:parcel"] ${pseudoElement.selector})`;
+            return resultSelector + prefix + ' ' + pseudoElement.selector + excludeParcelsPseudoClass + pseudoElement.pseudoElement + suffix;
+          }
+
+          const excludeParcelsPseudoClass = `:not([id^="single-spa-application\\:parcel"] ${selectorWithoutPrefix})`;
+          return resultSelector + selector + excludeParcelsPseudoClass + suffix;
         }
         return resultSelector + selector + suffix;
       }
 
+      const pseudoElement = extractPseudoElement(selector);
+
+      if (pseudoElement) {
+        if (opts.excludeParcels) {
+          if (!pseudoElement.selector) pseudoElement.selector = '*';
+          const excludeParcelsPseudoClass = `:not([id^="single-spa-application\\:parcel"] ${pseudoElement.selector})`;
+          return resultSelector + prefix + ' ' + pseudoElement.selector + excludeParcelsPseudoClass + pseudoElement.pseudoElement + additionalSelectors + suffix;
+        }
+      }
 
       // 4. Prefix selector
-      return resultSelector + (prefix + ' ' + selector + (opts.excludeParcels ? `:not([id^="single-spa-application\\:parcel"] ${selector})` : '') +
-        (additionalSelectorsProvided ? ', ' +  opts.additionalSelectors.map(s =>  `${s} ${selector}`).join(', ') : '')) + suffix;
+      return resultSelector
+        + prefix + ' '
+        + selector
+        + (opts.excludeParcels ? `:not([id^="single-spa-application\\:parcel"] ${selector})` : '')
+        + additionalSelectors
+        + suffix;
 
     }, '');
 
