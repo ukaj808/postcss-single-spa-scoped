@@ -1,6 +1,6 @@
 {
   "name": "postcss-single-spa-scoped",
-  "version": "1.6.1",
+  "version": "1.6.2",
   "description": "PostCSS plugin for manipulating the CSS in a single-spa application to best achieve scoped CSS",
   "keywords": [
     "postcss",
