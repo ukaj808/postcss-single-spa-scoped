@@ -103,6 +103,13 @@ module.exports = (opts) => {
         }
       }
 
+      if (rule.source && rule.source.input && rule.source.input.file) {
+        if (/vue&type=style&index=\d+&scoped=[^&]+/.test(rule.source.input.file)) {
+          rule[processed] = true;
+          return;
+        }
+      }
+
 
       const additionalSelectorsProvided = opts.additionalSelectors && opts.additionalSelectors.length > 0;
 
