@@ -228,3 +228,12 @@ it(':root is replaced entirely with the single spa app id when in a list of sele
     '#single-spa-application\\:\\@org\\/app-name button, #single-spa-application\\:\\@org\\/app-name { --main-bg-color: brown; }');
 });
 
+it('nested css rules are NOT prefixed', async () => {
+  await run('div { a { display: flex; } }',
+    '#single-spa-application\\:\\@org\\/app-name div { a { display: flex; } }');
+});
+
+it('nested css rules with & nesting selector are NOT prefixed', async () => {
+  await run('div { &:hover { display: flex; } }',
+    '#single-spa-application\\:\\@org\\/app-name div { &:hover { display: flex; } }');
+});

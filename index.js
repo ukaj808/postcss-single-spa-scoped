@@ -110,6 +110,12 @@ module.exports = (opts) => {
         }
       }
 
+      // do not prefix nested rules
+      if (rule.parent && rule.parent.type === 'rule') {
+        rule[processed] = true;
+        return;
+      }
+
 
       const additionalSelectorsProvided = opts.additionalSelectors && opts.additionalSelectors.length > 0;
 
