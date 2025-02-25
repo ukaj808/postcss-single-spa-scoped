@@ -128,7 +128,31 @@ module.exports = (opts) => {
         let suffix = i === rule.selectors.length - 1 ? '' : ', ';
         let additionalSelectors = additionalSelectorsProvided ? ', ' + opts.additionalSelectors.map(s => `${s} ${selector}`).join(', ') : '';
 
-        selector = selector.replaceAll(":root", prefix);
+        if (selector === ':root') {
+          if (additionalSelectorsProvided) {
+            const simpleAdditionalSelectorList =
+              opts.additionalSelectors.join(', ');
+            return resultSelector + prefix + ', ' + simpleAdditionalSelectorList + suffix;
+          } else {
+            return resultSelector + prefix + suffix;
+          }
+        }
+
+        if (selector.includes(':root')) {
+          if (additionalSelectorsProvided) {
+            const expandedSelector =
+              Array.from({ length: opts.additionalSelectors.length + 1 }, () => selector)
+                .map((s, i) => {
+                  const ref = [prefix, ...opts.additionalSelectors];
+                  return s.replace(':root', ref[i]);
+                })
+                .join(', ');
+
+            return resultSelector + expandedSelector + suffix;
+          } else {
+            return resultSelector + selector.replace(':root', prefix) + suffix;
+          }
+        }
 
         // 3. Check if selector is already prefixed
         if (selector.startsWith(prefix)) {

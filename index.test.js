@@ -213,19 +213,43 @@ it('When ::before or ::after are used on there own (implying all elements) and a
     { excludeParcels: true });
 });
 
-it(':root is replaced entirely with the single spa app id', async () => {
+it('a single simple :root selector is replaced entirely with the single spa app id', async () => {
   await run(':root { --main-bg-color: brown; };',
     '#single-spa-application\\:\\@org\\/app-name { --main-bg-color: brown; }');
 });
 
-it(':root with combinator only replaces :root with single spa app id', async () => {
+it('a single simple :root selector is transformed into a selector list with the app id and additional selectors when additionalSelectors provided', async () => {
+  await run(':root { --main-bg-color: brown; };',
+    '#single-spa-application\\:\\@org\\/app-name, #app, #blahblah123 { --main-bg-color: brown; }',
+    { additionalSelectors: ['#app', '#blahblah123'] });
+});
+
+it('a single complex selector with :root in it only replaces the :root string with single spa app id', async () => {
   await run(':root > .c1 { --main-bg-color: brown; };',
     '#single-spa-application\\:\\@org\\/app-name > .c1 { --main-bg-color: brown; }');
 });
 
-it(':root is replaced entirely with the single spa app id when in a list of selectors', async () => {
+it('a single complex selector with :root in it turns into a list of selectors, where the rule is duplicated (and changed) for every additional selector when additional selectors provided', async () => {
+  await run(':root > .c1 { --main-bg-color: brown; };',
+    '#single-spa-application\\:\\@org\\/app-name > .c1, #app > .c1, #blahblah123 > .c1 { --main-bg-color: brown; }',
+    { additionalSelectors: ['#app', '#blahblah123'] });
+});
+
+it('a simple :root selector in a selector list is replaced the single spa app id', async () => {
   await run('button, :root { --main-bg-color: brown; };',
     '#single-spa-application\\:\\@org\\/app-name button, #single-spa-application\\:\\@org\\/app-name { --main-bg-color: brown; }');
+});
+
+it('a simple :root selector in a selector list is transformed into a list of selectors, with a selector for the app id and each additional selector', async () => {
+  await run('button, :root { --main-bg-color: brown; };',
+    '#single-spa-application\\:\\@org\\/app-name button, #app button, #blahblah123 button, #single-spa-application\\:\\@org\\/app-name, #app, #blahblah123 { --main-bg-color: brown; }',
+    { additionalSelectors: ['#app', '#blahblah123'] });
+});
+
+it(':root with combinator with a combinator turns into a list of selectors where :root is replaced in each selector by first the single spa app id and then the additional selectors; inside an original list', async () => {
+  await run('button, :root > .c1 { --main-bg-color: brown; };',
+    '#single-spa-application\\:\\@org\\/app-name button, #app button, #blahblah123 button, #single-spa-application\\:\\@org\\/app-name > .c1, #app > .c1, #blahblah123 > .c1 { --main-bg-color: brown; }',
+    { additionalSelectors: ['#app', '#blahblah123'] });
 });
 
 it('nested css rules are NOT prefixed', async () => {
