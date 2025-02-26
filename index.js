@@ -4,7 +4,7 @@ const uuid = require('uuid');
 
 
 const extractPseudoElement = (str) => {
-  const pseudoElementsRegex = /^(.*?)(::(?:after|backdrop|before|cue(?:\([^()]*\))?|file-selector-button|first-letter|first-line|grammar-error|highlight\([^()]+\)|marker|part\([^()]+\)|placeholder|selection|slotted\([^()]+\)|spelling-error|target-text|view-transition(?:-image-pair\([^()]+\)|-group\([^()]+\)|-new\([^()]+\)|-old\([^()]+\))?))$/;
+  const pseudoElementsRegex = /^(.*?)(::?(?:after|backdrop|before|cue(?:\([^()]*\))?|file-selector-button|first-letter|first-line|grammar-error|highlight\([^()]+\)|marker|part\([^()]+\)|placeholder|selection|slotted\([^()]+\)|spelling-error|target-text|view-transition(?:-image-pair\([^()]+\)|-group\([^()]+\)|-new\([^()]+\)|-old\([^()]+\))?))$/;
   const match = str.match(pseudoElementsRegex);
   if (match) {
     return {

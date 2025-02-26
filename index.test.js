@@ -161,6 +161,11 @@ it('When ::before or ::after pseudo-elements are used on there own (implying all
     '#single-spa-application\\:\\@org\\/app-name ::before, #single-spa-application\\:\\@org\\/app-name ::after { display: flex; }');
 });
 
+it('When CSS2 before and after pseudo-elements are used on there own (implying all elements), simply prefix them with the single-spa prefix', async () => {
+  await run(':before, :after { display: flex; }',
+    '#single-spa-application\\:\\@org\\/app-name :before, #single-spa-application\\:\\@org\\/app-name :after { display: flex; }');
+});
+
 it('When ::before or ::after pseudo-elements are used on a selector, prefix them with the single-spa prefix', async () => {
   await run('div::before, div::after { display: flex; }',
     '#single-spa-application\\:\\@org\\/app-name div::before, #single-spa-application\\:\\@org\\/app-name div::after { display: flex; }');
@@ -174,6 +179,12 @@ it('When ::before or ::after pseudo-elements are use on a selector with a combin
 it('When ::before or ::after pseudo-elements are used are on there own (implying all elements), and exclude parcels is true, prefix with them with a * then splice in the excludeParcels pseudo class between the star and pseudo-element', async () => {
   await run('::before , ::after { display: flex; };',
     '#single-spa-application\\:\\@org\\/app-name *:not([id^="single-spa-application\\:parcel"] *)::before, #single-spa-application\\:\\@org\\/app-name *:not([id^="single-spa-application\\:parcel"] *)::after { display: flex; };',
+    { excludeParcels: true });
+});
+
+it('When CSS2 before and after pseudo-elements are used on there own (implying all elements), and exclude parcels is true, prefix with them with a * then splice in the excludeParcels pseudo class between the star and pseudo-element', async () => {
+  await run(':before , :after { display: flex; };',
+    '#single-spa-application\\:\\@org\\/app-name *:not([id^="single-spa-application\\:parcel"] *):before, #single-spa-application\\:\\@org\\/app-name *:not([id^="single-spa-application\\:parcel"] *):after { display: flex; };',
     { excludeParcels: true });
 });
 
